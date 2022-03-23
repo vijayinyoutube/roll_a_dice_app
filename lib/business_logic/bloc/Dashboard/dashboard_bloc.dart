@@ -17,7 +17,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
             score: state.score));
         await Future.delayed(const Duration(seconds: 1), () async {
           var diceValue = Random().nextInt(5) + 1;
-          if (state.chancesLeft - 1 > 0) {
+          if (state.chancesLeft - 1 < 0) {
             emit(DashboardLoaded(
                 diceVal: diceValue,
                 chancesLeft: state.chancesLeft - 1,
@@ -49,6 +49,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
               diceVal: state.diceVal,
               chancesLeft: state.chancesLeft));
         });
+      } else if (event is RestartGame) {
+        emit(const DashboardInitial(score: 1, diceVal: 0, chancesLeft: 10));
       }
     });
   }

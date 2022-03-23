@@ -10,4 +10,5 @@ List<String> dasboardImages = [
   "assets/images/dashboard_page/dice4.png",
   "assets/images/dashboard_page/dice5.png",
   "assets/images/dashboard_page/dice6.png",
+  "assets/images/dashboard_page/result.png",
 ];
