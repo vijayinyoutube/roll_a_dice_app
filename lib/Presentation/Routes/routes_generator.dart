@@ -23,14 +23,14 @@ class RouteGenerator {
         );
 
       case '/dashboard':
-        // if (args is String) {
+         if (args is String) {
           return MaterialPageRoute(
             builder: (_) => BlocProvider<DashboardBloc>.value(
               value: _dashboardBloc,
-              child: Dashboard(title: "Dashboard", username: "User"),
+              child: Dashboard(title: "Dashboard", username: args),
             ),
           );
-        // }
+         }
         return _errorRoute();
 
       default:

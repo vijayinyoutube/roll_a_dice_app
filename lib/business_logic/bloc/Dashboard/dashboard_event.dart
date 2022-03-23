@@ -5,7 +5,10 @@ abstract class DashboardEvent {}
 
 class NavBack extends DashboardEvent {}
 
-class Rollice extends DashboardEvent {}
+class Rollice extends DashboardEvent {
+  final String userName;
+  Rollice(this.userName);
+}
 
 class Logout extends DashboardEvent {}
 
