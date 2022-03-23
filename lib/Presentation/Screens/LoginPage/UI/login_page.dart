@@ -8,7 +8,6 @@ import '../../../Components/spacers.dart';
 import '../../../Declarations/Constants/constants.dart';
 import '../../../Declarations/Images/images.dart';
 import '../Widgets/login_btn.dart';
-import '../Widgets/social_signin.dart';
 import '../Widgets/text_data_widget.dart';
 import '../Widgets/text_form_field.dart';
 
@@ -77,12 +76,15 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: [
             ImageBuilder(imagePath: loginImages[0]),
-            const TextData(message: "User"),
+            const TextData(
+              message1: "Login ",
+              message2: "User",
+            ),
             HeightSpacer(myHeight: kSpacing),
             InputField(
               focusNode: usernameFocus,
               textController: userName,
-              label: "Username",
+              label: "Email ID",
               icons: const Icon(Icons.person, color: Colors.blue),
             ),
             HeightSpacer(myHeight: kSpacing),
@@ -99,7 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
               password: password,
             ),
             HeightSpacer(myHeight: kSpacing),
-            const SocialSignIn(),
           ],
         ),
       );
@@ -107,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ScaffoldFeatureController buildErrorLayout() =>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please enter username/password!'),
+          content: Text('Login failed'),
         ),
       );
 
