@@ -8,3 +8,5 @@ class NavBack extends DashboardEvent {}
 class Rollice extends DashboardEvent {}
 
 class Logout extends DashboardEvent {}
+
+class RestartGame extends DashboardEvent {}

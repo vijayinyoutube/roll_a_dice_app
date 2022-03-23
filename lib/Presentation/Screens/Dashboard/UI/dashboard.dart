@@ -25,6 +25,8 @@ class Dashboard extends StatelessWidget {
           if (state is LogoutState) {
             Authentication().signOut();
             Navigator.pop(context);
+          } else if (state is GameDone) {
+            _showMyDialog(context, state.score);
           }
         },
         builder: (context, state) {
@@ -40,9 +42,11 @@ class Dashboard extends StatelessWidget {
                 diceVal: state.diceVal,
                 changesLeft: state.chancesLeft,
                 score: state.score);
-          } else if (state is GameDone) {
-            return buildResultLayout();
-          } else {
+          }
+          // else if (state is GameDone) {
+          //   return buildResultLayout();
+          // }
+          else {
             return initialLayout(context,
                 diceVal: state.diceVal,
                 changesLeft: state.chancesLeft,
@@ -168,7 +172,110 @@ class Dashboard extends StatelessWidget {
         ),
       );
 
-  Widget buildResultLayout() => const Center(
-        child: Text("Game Over"),
+  // Widget buildResultLayout(BuildContext context) =>  _showMyDialog(context);
+
+  Future<void> _showMyDialog(contextBloc, int score) async {
+    return showDialog<void>(
+      context: contextBloc,
+      builder: (BuildContext context) {
+        return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            elevation: 0.0,
+            backgroundColor: Colors.transparent,
+            child: SingleChildScrollView(
+              child: dialogContent(contextBloc, score),
+            ));
+      },
+    );
+  }
+
+  dialogContent(BuildContext context, int score) => Stack(
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.only(
+              top: 55,
+            ),
+            margin: const EdgeInsets.only(top: 55),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10.0,
+                  offset: Offset(0.0, 10.0),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const Text(
+                  "Congratulations",
+                  style: TextStyle(
+                    fontSize: 25.00,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                Text(
+                  "You scored: $score",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 20.00,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.black,
+                  ),
+                ),
+                const HeightSpacer(myHeight: 10.5),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: TextButton(
+                      onPressed: () {
+                        BlocProvider.of<DashboardBloc>(context).add(Logout());
+                      },
+                      child: const Text(
+                        "Play again",
+                        style: TextStyle(
+                          fontSize: 20.00,
+                          fontWeight: FontWeight.w300,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            left: 50,
+            right: 50,
+            child: CircleAvatar(
+              radius: 49.55,
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.transparent,
+              child: CircleAvatar(
+                radius: 47.00,
+                backgroundColor: Colors.greenAccent,
+                foregroundColor: Colors.transparent,
+                child: Align(
+                  child: Image.asset(
+                    dasboardImages[6],
+                    width: 100,
+                    height: 100,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       );
 }
