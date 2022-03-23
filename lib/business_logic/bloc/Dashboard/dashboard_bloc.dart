@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
+import '../../../Data/Repository/Firebase/firebase_storage.dart';
+
 part 'dashboard_event.dart';
 part 'dashboard_state.dart';
 
@@ -17,7 +19,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
             score: state.score));
         await Future.delayed(const Duration(seconds: 1), () async {
           var diceValue = Random().nextInt(5) + 1;
-          if (state.chancesLeft - 1 < 0) {
+          if (state.chancesLeft - 1 > 0) {
             emit(DashboardLoaded(
                 diceVal: diceValue,
                 chancesLeft: state.chancesLeft - 1,
@@ -32,11 +34,13 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
                 chancesLeft: state.chancesLeft,
                 diceVal: state.diceVal,
                 score: state.score));
+            emit(const DashboardInitial(score: 1, diceVal: 0, chancesLeft: 10));
             emit(GameDone(
                 diceVal: state.diceVal,
                 chancesLeft: state.chancesLeft,
                 score: state.score));
           }
+          FireStoreDataBase().addValuestoFS(event.userName, state.score);
         });
       } else if (event is Logout) {
         emit(DashboardLoading(
@@ -44,6 +48,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
             diceVal: state.diceVal,
             chancesLeft: state.chancesLeft));
         await Future.delayed(const Duration(seconds: 3), () async {
+          emit(const DashboardInitial(score: 1, diceVal: 0, chancesLeft: 10));
           emit(LogoutState(
               score: state.score,
               diceVal: state.diceVal,

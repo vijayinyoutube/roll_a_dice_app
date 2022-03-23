@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:roll_a_dice_app/Data/Repository/Firebase/firebase_auth.dart';
-import 'package:roll_a_dice_app/Presentation/Declarations/Constants/constants.dart';
 
+import '../../../../Data/Repository/Firebase/firebase_auth.dart';
+import '../../../../Data/Repository/Firebase/firebase_storage.dart';
 import '../../../../business_logic/bloc/Dashboard/dashboard_bloc.dart';
 import '../../../Components/image_builder.dart';
 import '../../../Components/loader.dart';
 import '../../../Components/spacers.dart';
+import '../../../Declarations/Constants/constants.dart';
 import '../../../Declarations/Images/images.dart';
 import '../../LoginPage/Widgets/text_data_widget.dart';
 
@@ -23,8 +24,9 @@ class Dashboard extends StatelessWidget {
       body: BlocConsumer<DashboardBloc, DashboardState>(
         listener: (context, state) {
           if (state is LogoutState) {
-            Authentication().signOut();
             Navigator.pop(context);
+
+            Authentication().signOut();
           } else if (state is GameDone) {
             _showMyDialog(context, state.score);
           }
@@ -66,26 +68,39 @@ class Dashboard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              GestureDetector(
-                onTap: () {
-                  BlocProvider.of<DashboardBloc>(context).add(Logout());
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    const Icon(
-                      Icons.logout,
-                      color: Colors.red,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  FutureBuilder(
+                      future: FireStoreDataBase().getData(username),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Text("leaderboard: ${snapshot.data}");
+                        }
+                        return const Text("");
+                      }),
+                  GestureDetector(
+                    onTap: () {
+                      BlocProvider.of<DashboardBloc>(context).add(Logout());
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const Icon(
+                          Icons.logout,
+                          color: Colors.red,
+                        ),
+                        Padding(
+                          padding: kHPadding / 10,
+                          child: const Text(
+                            "Logout",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: kHPadding / 10,
-                      child: const Text(
-                        "Logout",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
-                  ],
-                ),
+                  )
+                ],
               ),
               HeightSpacer(myHeight: kSpacing),
               Container(
@@ -146,7 +161,8 @@ class Dashboard extends StatelessWidget {
               const HeightSpacer(myHeight: 50.00),
               GestureDetector(
                 onTap: () {
-                  BlocProvider.of<DashboardBloc>(context).add(Rollice());
+                  BlocProvider.of<DashboardBloc>(context)
+                      .add(Rollice(username));
                 },
                 child: Container(
                   width: 192,
@@ -239,10 +255,11 @@ class Dashboard extends StatelessWidget {
                     alignment: Alignment.bottomRight,
                     child: TextButton(
                       onPressed: () {
+                        Navigator.pop(context);
                         BlocProvider.of<DashboardBloc>(context).add(Logout());
                       },
                       child: const Text(
-                        "Play again",
+                        "End Game",
                         style: TextStyle(
                           fontSize: 20.00,
                           fontWeight: FontWeight.w300,
